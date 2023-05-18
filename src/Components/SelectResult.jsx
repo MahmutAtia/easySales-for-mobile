@@ -1,8 +1,10 @@
 import { FlatList } from 'react-native'
 import React, { useEffect } from 'react'
 import {  Icon, ListItem } from "@rneui/base";
+import SelectComponent from './SelectComponent';
+import Selcet from './Selcet';
 
-const SelectResult = React.memo(({result,setResult,resultdata}) => {
+const SelectResult = ({result,setResult,resultdata}) => {
 
 
 
@@ -31,22 +33,11 @@ const SelectResult = React.memo(({result,setResult,resultdata}) => {
          
             data={resultdata}
             renderItem={({ item, index }) => (
-              <ListItem
-                key={item?.index}
-                onPress={() => {
-                  setResult(item?.contact_result);
-                  setExpanded(false);
-                }}
-                bottomDivider
-              >
-                <ListItem.Content>
-                  <ListItem.Title>{item?.contact_result}</ListItem.Title>
-                </ListItem.Content>
-              </ListItem>
+              <Selcet  item={item.contact_result} index={index} setResult={setResult} setExpanded={setExpanded} />
             )}
           />
         </ListItem.Accordion>
   )
-})
+}
 
 export default SelectResult

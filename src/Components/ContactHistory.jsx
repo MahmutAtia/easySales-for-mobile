@@ -1,11 +1,12 @@
 import { View, Text, FlatList, ActionSheetIOS } from "react-native";
 import React from "react";
 import { useFetchV2 } from "../hoocs";
-import { Dialog, Icon, ListItem, Slider } from "@rneui/base";
+import { Card, Dialog, Icon, ListItem, Slider } from "@rneui/base";
 import axios from "axios";
 
 import call from "react-native-phone-call";
 import { ActivityIndicator } from "react-native";
+import ContactCard from "./ContactCard";
 
 const ContactHistory = ({ company, visable, setVisable }) => {
   const [data, setData] = React.useState([]);
@@ -24,6 +25,11 @@ const ContactHistory = ({ company, visable, setVisable }) => {
       })
       .catch((error) => {
         setError(error);
+
+        if (error?.response?.status === 404) {
+          setData([]);
+          setLoading(false);
+        }
       });
   }, [company]);
 
@@ -31,7 +37,7 @@ const ContactHistory = ({ company, visable, setVisable }) => {
 
   return (
     <Dialog
-      overlayStyle={{ backgroundColor: "white", height: "55%", width: "95%" }}
+      overlayStyle={{ backgroundColor: "white", height: "60%", width: "95%" }}
       isVisible={visable}
       onBackdropPress={() => setVisable(false)}
     >
@@ -40,20 +46,15 @@ const ContactHistory = ({ company, visable, setVisable }) => {
       {loading ? (
         <ActivityIndicator size={50} />
       ) : (
-        <View className="flex-1 space-y-10 ">
-          {error && <Text>Error: can't fetch data </Text>}
-
+        <View className="flex-1  ">
+          {error?.response?.status !== 404 && (
+            <Text>{error?.response?.status}</Text>
+          )}
+          {data.length === 0 && <Text>No Contact History Found</Text>}
           <FlatList
             data={data}
             renderItem={({ item, index }) => (
-              <View className="flex flex-row justify-evenly items-center py-2 my-2 border rounded-3xl ">
-                <Icon name="call" size={25} />
-                <Text>{item?.typ}</Text>
-                <Icon name="calendar" type="evilicon" size={25} />
-                <Text>{item?.date}</Text>
-                <Icon name="star" size={25} />
-                <Text> {item?.result?.substring(0, 10)}</Text>
-              </View>
+              <ContactCard item={item} index={index} />
             )}
           />
           <Dialog.Actions>

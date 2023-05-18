@@ -1,13 +1,15 @@
 import { View, Text, FlatList, ScrollView } from "react-native";
 
-import React from "react";
+import React, { useEffect } from "react";
 import { useFetch } from "../hoocs";
-import { Button, FAB, Header, Icon } from "@rneui/base";
+import { Button, FAB, Header, Icon, SearchBar } from "@rneui/base";
 import FilterDialog from "../Components/FilterComponent";
 import AddResult from "../Components/AddResult";
 import ContactHistory from "../Components/ContactHistory";
 import { TouchableOpacity } from "react-native";
 import { ActivityIndicator } from "react-native";
+import CompanyCard from "../Components/CompanyCard";
+import FlatListCompnent from "../Components/FlatListCompnent";
 
 const Companies = ({ server, setServer }) => {
   //get all countries
@@ -31,6 +33,12 @@ const Companies = ({ server, setServer }) => {
   const [data, error, loading] = useFetch(
     server + `/mobile/${filters.user}/${filters.country}/${filters.number}`
   );
+
+  // update the companies
+  const [companies, setCompanies] = React.useState(data);
+  useEffect(() => {
+    setCompanies(data);
+  }, [data]);
 
   // handle the dialogs
   const [visable, setVisable] = React.useState(false);
@@ -63,6 +71,21 @@ const Companies = ({ server, setServer }) => {
           </View>
         }
       />
+      <SearchBar
+        lightTheme
+        round
+        platform="android"
+        inputContainerStyle={{ backgroundColor: "white" }}
+        containerStyle={{ backgroundColor: "#1E90FF" }}
+        placeholder="Search in Filtered Companies"
+        onChangeText={(text) =>
+          setCompanies(
+            data.filter((item) =>
+              item.name.toLowerCase().includes(text.toLowerCase())
+            )
+          )
+        }
+      />
 
       {/* Dialog for Fitering */}
       <FilterDialog
@@ -92,39 +115,15 @@ const Companies = ({ server, setServer }) => {
       ) : (
         <View className="flex flex-[0.95]">
           {/* Error Handling */}
-          {error && <Text>Error: can't fetch data </Text>}
-          <FlatList
-            data={data}
-            renderItem={({ item }) => (
-              <View className="flex flex-col border p-5 m-3 rounded-3xl space-y-1">
-                <Text className="text-xl font-bold">{item?.name}</Text>
-                <View className="flex flex-row">
-                  <Icon name="call" size={25} />
-                  <Text className="text-md mb-3">{item?.phone}</Text>
-                </View>
-
-                <View className="flex flex-row justify-evenly">
-                  <Button
-                    radius={"lg"}
-                    title="Contact History"
-                    onPress={() => {
-                      setSelectedCompany(item);
-                      setContactHistoryVisable(true);
-                    }}
-                  />
-
-                  <Button
-                    radius={"lg"}
-                    title="Add Result"
-                    onPress={() => {
-                      setSelectedCompany(item);
-                      setResultVisable(true);
-                    }}
-                  />
-                </View>
-              </View>
-            )}
-            keyExtractor={(item) => item.id.toString()}
+          {error?.response?.status !== 404 && (
+            <Text>{error?.response?.status}</Text>
+          )}
+          {data.length === 0 && <Text>No Company Found</Text>}
+          <FlatListCompnent
+            data={companies}
+            setResultVisable={setResultVisable}
+            setContactHistoryVisable={setContactHistoryVisable}
+            setSelectedCompany={setSelectedCompany}
           />
         </View>
       )}
