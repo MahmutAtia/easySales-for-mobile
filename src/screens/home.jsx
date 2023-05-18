@@ -12,7 +12,7 @@ const Home = () => {
 
    return (
     <View className="flex-1 ">
-      
+       
         <Text>hi</Text>
     </View>
   )

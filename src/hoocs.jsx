@@ -1,23 +1,48 @@
 import axios from "axios";
 import React from "react";
 
-export const useFetch = (url) => {
+export const useFetch = (server) => {
+  const [data, setData] = React.useState([]);
+  const [error, setError] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
 
-    const [data, setData] = React.useState(null);
-    const [error, setError] = React.useState(null);
-    const [loading, setLoading] = React.useState(false);
-  
-    React.useEffect(() => {
+  React.useEffect(() => {
+    setLoading(true);
+    const endpoint = server;
+    axios
+      .get(endpoint)
+      .then((response) => {
+        setData(response.data.results);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [server]);
 
-        const endpoint = "https://f600-88-240-181-166.ngrok-free.app/mobile" + url;
-        axios.get(endpoint).then((response) => {
-            setData(response.data.results);
-            setLoading(false);
-        }).catch((error) => { 
-            setError(error);
-            setLoading(false);
-        });     
-        }, [url]);
-    
-    return { data, error, loading };
+  return [data, error, loading];
+};
+
+export const useFetchV2 = (url) => {
+  const [data, setData] = React.useState([]);
+  const [error, setError] = React.useState(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    const endpoint = url;
+    axios
+      .get(endpoint)
+      .then((response) => {
+        setData(response.data.results);
+        setError(null);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      });
+  }, [url]);
+
+  return [data, error, loading];
 };
