@@ -2,10 +2,9 @@ import { View, Text } from 'react-native'
 import React from 'react'
 import { ListItem } from '@rneui/base';
 
-const Selcet = ({setExpanded,setResult,item,index}) => {
+const Selcet = ({setExpanded,setResult,item}) => {
   return (
     <ListItem
-    key={index}
     onPress={() => {
       setResult(item);
       setExpanded(false);
@@ -13,7 +12,8 @@ const Selcet = ({setExpanded,setResult,item,index}) => {
     bottomDivider
   >
     <ListItem.Content>
-      <ListItem.Title>{item}</ListItem.Title>
+    
+      <Text  className="text-[#476072] font-bold">{item}</Text>
     </ListItem.Content>
   </ListItem>
   )

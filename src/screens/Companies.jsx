@@ -2,7 +2,15 @@ import { View, Text, FlatList, ScrollView } from "react-native";
 
 import React, { useEffect } from "react";
 import { useFetch } from "../hoocs";
-import { Button, FAB, Header, Icon, SearchBar } from "@rneui/base";
+import {
+  Badge,
+  Button,
+  FAB,
+  Header,
+  Icon,
+  SearchBar,
+  withBadge,
+} from "@rneui/base";
 import FilterDialog from "../Components/FilterComponent";
 import AddResult from "../Components/AddResult";
 import ContactHistory from "../Components/ContactHistory";
@@ -10,6 +18,9 @@ import { TouchableOpacity } from "react-native";
 import { ActivityIndicator } from "react-native";
 import CompanyCard from "../Components/CompanyCard";
 import FlatListCompnent from "../Components/FlatListCompnent";
+import AnimatedCompnent from "../Components/AnimatedCompnent";
+import { set } from "react-native-reanimated";
+import TodayDialog from "../Components/TodayDialog";
 
 const Companies = ({ server, setServer }) => {
   //get all countries
@@ -29,6 +40,11 @@ const Companies = ({ server, setServer }) => {
     number: 30,
   });
 
+  // fetch the todays calls
+  const [todaydata, todayerror, todayloading] = useFetch(
+    server + "/mobile/today"
+  );
+
   // fetch the companies
   const [data, error, loading] = useFetch(
     server + `/mobile/${filters.user}/${filters.country}/${filters.number}`
@@ -36,19 +52,35 @@ const Companies = ({ server, setServer }) => {
 
   // update the companies
   const [companies, setCompanies] = React.useState(data);
+
+  // update the todays calls
+  const [today, setToday] = React.useState(todaydata);
+
   useEffect(() => {
+    console.log(todaydata.length);
+    setToday(todaydata);
     setCompanies(data);
-  }, [data]);
+
+  }, [data,todaydata]);
 
   // handle the dialogs
   const [visable, setVisable] = React.useState(false);
+
   const [resultvisable, setResultVisable] = React.useState(false);
+  // add to today when add result
+  const addToToday = (company) => {
+    setToday([company,...today]);
+  };
+
   const [contactHistoryVisable, setContactHistoryVisable] =
     React.useState(false);
+
+  const [todayVisable, settodayVisable] = React.useState(false);
 
   // handle selcted Company
 
   const [selectedCompany, setSelectedCompany] = React.useState(null);
+
 
   return (
     <View className="flex-1">
@@ -66,9 +98,27 @@ const Companies = ({ server, setServer }) => {
             <TouchableOpacity onPress={() => setServer(null)}>
               <Icon size={30} color="white" name="business" />
             </TouchableOpacity>
-
             <Text className="text-white text-2xl">Company List</Text>
           </View>
+        }
+        rightComponent={
+          <TouchableOpacity
+            className="relative mt-[0.5vh] mr-[7vh] p-[0.5vh]"
+            onPress={() => settodayVisable(true)}
+          >
+            <Icon size={30} color="white" name="ring-volume" />
+            <Badge
+              value={today?.length}
+              status="success"
+              size="large"
+              containerStyle={{
+                padding: 1,
+                position: "absolute",
+                top: -5,
+                left: 22,
+              }}
+            />
+          </TouchableOpacity>
         }
       />
       <SearchBar
@@ -87,6 +137,16 @@ const Companies = ({ server, setServer }) => {
         }
       />
 
+      {/* Dialog for todays calls */}
+
+      <TodayDialog
+        today={today}
+        error={todayerror}
+        loading={todayloading}
+        visable={todayVisable}
+        setVisable={settodayVisable}
+      />
+
       {/* Dialog for Fitering */}
       <FilterDialog
         countrydata={countrydata}
@@ -96,12 +156,13 @@ const Companies = ({ server, setServer }) => {
         setVisable={setVisable}
       />
 
-      {/* Company Dialog */}
+      {/* Result Dialog */}
       <AddResult
         resultsdata={resultsdata}
         company={selectedCompany}
         visable={resultvisable}
         setVisable={setResultVisable}
+        addToToday={addToToday}
       />
 
       <ContactHistory
@@ -131,11 +192,14 @@ const Companies = ({ server, setServer }) => {
       {/* Float Button for dialog */}
 
       <FAB
+      color="#F3A953"
         onPress={() => setVisable(true)}
         placement="right"
         title="Filter"
         icon={{ name: "tune", color: "white", size: 30 }}
       />
+
+      {/* Animated Button  */}
     </View>
   );
 };

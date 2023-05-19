@@ -1,11 +1,17 @@
-import { View, Text, FlatList, Alert } from "react-native";
+import { View, Text, FlatList, Alert, TouchableOpacity } from "react-native";
 import React, { useEffect, useMemo } from "react";
 import { Dialog, Icon, ListItem, Slider } from "@rneui/base";
 import SelectComponent from "./SelectComponent";
 import axios from "axios";
 import SelectResult from "./SelectResult";
 
-const AddResult = ({ company, visable, setVisable, resultsdata }) => {
+const AddResult = ({
+  company,
+  visable,
+  setVisable,
+  resultsdata,
+  addToToday,
+}) => {
   // states
   const [contactType, setContactType] = React.useState("ARAMA");
   const [contactResult, setContactResult] = React.useState("CEVAP YOK");
@@ -21,47 +27,57 @@ const AddResult = ({ company, visable, setVisable, resultsdata }) => {
   const send = () => {
     axios
       .post(company?.contact_url, obj)
-      .then((res) =>
-        Alert.alert("Success ", "The Contact Result was Added Successfully ")
-      )
+      .then((res) => {
+        Alert.alert("Success ", "The Contact Result was Added Successfully ");
+
+        // add to todays contacted companies
+        addToToday({
+          company: company.name,
+          typ: contactType,
+          result: contactResult,
+        });
+      })
       .catch((err) => {
         Alert.alert("Error Data Not Submited", "Please try again ");
       });
   };
   return (
     <Dialog
-      overlayStyle={{ backgroundColor: "white", height: "55%", width: "90%" }}
+      overlayStyle={{ backgroundColor: "white", height: "70%", width: "95%" }}
       isVisible={visable}
       onBackdropPress={() => setVisable(false)}
     >
       {/* Dialog Title */}
-      <Dialog.Title title={company?.name} />
+      {/* <Dialog.Title   /> */}
 
-      {/* Dialog Buttons */}
+      <TouchableOpacity
+        className="flex flex-row items-start justify-center space-x-1 mt-[4vh]"
+      >
+        <Icon size={30} color="#19A7CE" name="business" />
 
-      <Dialog.Actions>
-        <Dialog.Button
-          title="Submit"
-          onPress={() => {
-            send();
-            setVisable(false);
-          }}
-        />
-        <Dialog.Button title="CANCEL" onPress={() => setVisable(false)} />
-      </Dialog.Actions>
+        <Dialog.Title titleStyle={{fontStyle:"italic", color:"#146C94", fontSize:25}}title={ " "+company?.name}/>
+      </TouchableOpacity>
 
-      <View className="flex-1 space-y-10 ">
-        {/* Country Select */}
-        <ListItem.Title>Set Contact Result</ListItem.Title>
+
+    
+
+      <View className="flex-1 justify-between my-[5vh] ">
+
+
+         {/* Country Select */}
+
+         <View>
+          <Text className="text-lg font-bold text-[#548CA8]">Set Contact Result</Text>
         <SelectResult
           result={contactResult}
           setResult={setContactResult}
           resultdata={resultsdata}
         />
+        </View>
 
-        {/* Contact Type checkbox */}
-        <ListItem.Title>Set Contact Type</ListItem.Title>
-
+       {/* Contact Type checkbox */}
+       <View>
+       <Text className="text-lg font-bold text-[#548CA8]">Set Contact Type</Text>
         <ListItem>
           <ListItem.CheckBox
             center
@@ -88,7 +104,25 @@ const AddResult = ({ company, visable, setVisable, resultsdata }) => {
             onPress={() => setContactType("E-POSTA")}
           />
         </ListItem>
+            </View>
+
+         
+
+       
+
       </View>
+      {/* Dialog Buttons */}
+
+      <Dialog.Actions>
+        <Dialog.Button
+          title="Submit"
+          onPress={() => {
+            send();
+            setVisable(false);
+          }}
+        />
+        <Dialog.Button title="CANCEL" onPress={() => setVisable(false)} />
+      </Dialog.Actions>
     </Dialog>
   );
 };

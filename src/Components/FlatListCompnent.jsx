@@ -7,8 +7,9 @@ const FlatListCompnent = ({ data ,setResultVisable, setContactHistoryVisable,set
   return (
     <FlatList
       data={data}
-      renderItem={({ item }) => (
+      renderItem={({ item , index}) => (
         <CompanyCard
+          index={index}
           item={item}
           setSelectedCompany={setSelectedCompany}
           setContactHistoryVisable={setContactHistoryVisable}

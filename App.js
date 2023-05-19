@@ -11,7 +11,7 @@ export default function App() {
   return (
     <SafeAreaView className="flex-1 " >
       {!server ? <ServerLinKScreen setServer={setServer}/> :<Companies server={server} setServer={setServer}/> }  
-      <StatusBar style="light" />
+     <StatusBar style="light" />
    
       
     </SafeAreaView>

@@ -7,6 +7,7 @@ export const useFetch = (server) => {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
+    console.log("i am fetching todays data")
     setLoading(true);
     const endpoint = server;
     axios
