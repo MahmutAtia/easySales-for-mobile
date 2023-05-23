@@ -1,20 +1,20 @@
-import { FlatList } from "react-native";
-import React, { useEffect } from "react";
+import { ScrollView } from "react-native";
+import React from "react";
 import { Icon, ListItem } from "@rneui/base";
-import SelectComponent from "./SelectComponent";
 import Selcet from "./Selcet";
-import { ScrollView } from "react-native-gesture-handler";
+
 
 const SelectResult = ({ result, setResult, resultdata }) => {
   // Accordion state
   const [expanded, setExpanded] = React.useState(false);
+
 
   return (
     <ListItem.Accordion
       value={result}
       content={
         <>
-          <Icon name="call" size={25} />
+          <Icon color="#FDB827" name="call" size={25} />
           <ListItem.Content>
             <ListItem.Title> {result} </ListItem.Title>
           </ListItem.Content>

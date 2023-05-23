@@ -3,9 +3,8 @@ import React, { useEffect } from "react";
 import { Icon, ListItem } from "@rneui/base";
 import Selcet from "./Selcet";
 
-const SelectComponent = ({ country, setCountry, countrydata }) => {
+const SelectComponent = ({ country, setCountry, countrydata ,expanded, setExpanded}) => {
   // Accordion state
-  const [expanded, setExpanded] = React.useState(false);
 
   return (
     <ListItem.Accordion
@@ -25,12 +24,14 @@ const SelectComponent = ({ country, setCountry, countrydata }) => {
     >
       <FlatList
         data={[{ name: "all" }, ...countrydata]}
+        keyExtractor={(item,index) => index.toString()}
         renderItem={({ item, index }) => (
           <Selcet
             item={item.name}
             index={index}
             setResult={setCountry}
             setExpanded={setExpanded}
+    
           />
         )}
       />
@@ -38,4 +39,4 @@ const SelectComponent = ({ country, setCountry, countrydata }) => {
   );
 };
 
-export default SelectComponent;
+export default React.memo(SelectComponent);

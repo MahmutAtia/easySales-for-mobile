@@ -1,7 +1,6 @@
-import { View, Text, FlatList, Alert, TouchableOpacity } from "react-native";
-import React, { useEffect, useMemo } from "react";
-import { Dialog, Icon, ListItem, Slider } from "@rneui/base";
-import SelectComponent from "./SelectComponent";
+import { View, Text, TouchableOpacity ,Alert} from "react-native";
+import React from "react";
+import { Dialog, Icon, ListItem } from "@rneui/base";
 import axios from "axios";
 import SelectResult from "./SelectResult";
 
@@ -85,6 +84,7 @@ const AddResult = ({
             checkedIcon="dot-circle-o"
             uncheckedIcon="circle-o"
             checked={contactType === "ARAMA"}
+            checkedColor="#FDB827"
             onPress={() => setContactType("ARAMA")}
           />
           <ListItem.CheckBox
@@ -93,6 +93,8 @@ const AddResult = ({
             checkedIcon="dot-circle-o"
             uncheckedIcon="circle-o"
             checked={contactType === "WHATSAPP"}
+            checkedColor="#FDB827"
+
             onPress={() => setContactType("WHATSAPP")}
           />
           <ListItem.CheckBox
@@ -101,6 +103,8 @@ const AddResult = ({
             checkedIcon="dot-circle-o"
             uncheckedIcon="circle-o"
             checked={contactType === "E-POSTA"}
+            checkedColor="#FDB827"
+
             onPress={() => setContactType("E-POSTA")}
           />
         </ListItem>

@@ -1,25 +1,14 @@
 import { View, Text, FlatList, ScrollView } from "react-native";
 
 import React, { useEffect } from "react";
-import { useFetch } from "../hoocs";
-import {
-  Badge,
-  Button,
-  FAB,
-  Header,
-  Icon,
-  SearchBar,
-  withBadge,
-} from "@rneui/base";
+import { useFetch, useFetchToday } from "../hoocs";
+import { Badge, Button, FAB, Header, Icon, SearchBar } from "@rneui/base";
 import FilterDialog from "../Components/FilterComponent";
 import AddResult from "../Components/AddResult";
 import ContactHistory from "../Components/ContactHistory";
 import { TouchableOpacity } from "react-native";
 import { ActivityIndicator } from "react-native";
-import CompanyCard from "../Components/CompanyCard";
 import FlatListCompnent from "../Components/FlatListCompnent";
-import AnimatedCompnent from "../Components/AnimatedCompnent";
-import { set } from "react-native-reanimated";
 import TodayDialog from "../Components/TodayDialog";
 
 const Companies = ({ server, setServer }) => {
@@ -41,7 +30,7 @@ const Companies = ({ server, setServer }) => {
   });
 
   // fetch the todays calls
-  const [todaydata, todayerror, todayloading] = useFetch(
+  const [todaydata, todayerror, todayloading, callTodayCompanyNames , emailShoulBeSend, refreshtoday] = useFetchToday(
     server + "/mobile/today"
   );
 
@@ -56,12 +45,12 @@ const Companies = ({ server, setServer }) => {
   // update the todays calls
   const [today, setToday] = React.useState(todaydata);
 
+  // rerender
+
   useEffect(() => {
-    console.log(todaydata.length);
     setToday(todaydata);
     setCompanies(data);
-
-  }, [data,todaydata]);
+  }, [data, todaydata]);
 
   // handle the dialogs
   const [visable, setVisable] = React.useState(false);
@@ -69,7 +58,7 @@ const Companies = ({ server, setServer }) => {
   const [resultvisable, setResultVisable] = React.useState(false);
   // add to today when add result
   const addToToday = (company) => {
-    setToday([company,...today]);
+    setToday([company, ...today]);
   };
 
   const [contactHistoryVisable, setContactHistoryVisable] =
@@ -81,6 +70,13 @@ const Companies = ({ server, setServer }) => {
 
   const [selectedCompany, setSelectedCompany] = React.useState(null);
 
+
+ 
+
+     
+    
+
+  
 
   return (
     <View className="flex-1">
@@ -104,7 +100,10 @@ const Companies = ({ server, setServer }) => {
         rightComponent={
           <TouchableOpacity
             className="relative mt-[0.5vh] mr-[7vh] p-[0.5vh]"
-            onPress={() => settodayVisable(true)}
+            onPress={() => {
+              settodayVisable(true);
+              refreshtoday()
+            }}
           >
             <Icon size={30} color="white" name="ring-volume" />
             <Badge
@@ -185,6 +184,9 @@ const Companies = ({ server, setServer }) => {
             setResultVisable={setResultVisable}
             setContactHistoryVisable={setContactHistoryVisable}
             setSelectedCompany={setSelectedCompany}
+            today={today}
+            callTodayCompanyNames={callTodayCompanyNames}
+            emailShoulBeSend={emailShoulBeSend}
           />
         </View>
       )}
@@ -192,7 +194,7 @@ const Companies = ({ server, setServer }) => {
       {/* Float Button for dialog */}
 
       <FAB
-      color="#F3A953"
+        color="#F3A953"
         onPress={() => setVisable(true)}
         placement="right"
         title="Filter"

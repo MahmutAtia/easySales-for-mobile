@@ -7,7 +7,6 @@ export const useFetch = (server) => {
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    console.log("i am fetching todays data")
     setLoading(true);
     const endpoint = server;
     axios
@@ -22,28 +21,53 @@ export const useFetch = (server) => {
       });
   }, [server]);
 
+ 
+ 
+
+
   return [data, error, loading];
 };
 
-export const useFetchV2 = (url) => {
+export const useFetchToday = (server) => {
   const [data, setData] = React.useState([]);
   const [error, setError] = React.useState(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    const endpoint = url;
+    setLoading(true);
+    const endpoint = server;
     axios
       .get(endpoint)
       .then((response) => {
         setData(response.data.results);
-        setError(null);
         setLoading(false);
       })
       .catch((error) => {
         setError(error);
         setLoading(false);
       });
-  }, [url]);
+  }, [server]);
 
-  return [data, error, loading];
+  const refresh = () => { 
+    setLoading(true);
+    const endpoint = server;  
+    axios
+      .get(endpoint)
+      .then((response) => {
+        setData(response.data.results);
+        setLoading(false);
+      })
+      .catch((error) => {
+        setError(error);
+        setLoading(false);
+      }); 
+  }
+
+   // get the company names that CALLED TODAY
+   const callTodayCompanyNames = data.map((item) => item.company);
+   const emailShoulBeSend = data.filter((item) => item.result.includes("EMAIL"))
+   .map((item) => item.company);
+
+
+  return [data, error, loading,callTodayCompanyNames,emailShoulBeSend, refresh];
 };

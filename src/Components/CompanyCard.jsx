@@ -1,4 +1,4 @@
-import { View, Text } from "react-native";
+import { View } from "react-native";
 import React from "react";
 import { Card, Button, Icon, Badge } from "@rneui/base";
 import * as Linking from "expo-linking";
@@ -6,42 +6,54 @@ import * as Clipboard from "expo-clipboard";
 import { TouchableOpacity } from "react-native";
 
 const CompanyCard = ({
+  index,
   item,
   setSelectedCompany,
   setContactHistoryVisable,
   setResultVisable,
-  index,
+  callTodayCompanyNames,
+  emailShoulBeSend,
 }) => {
   const copyToClipboard = async (companyName) => {
     await Clipboard.setStringAsync(companyName);
   };
 
-  return (
-    <Card key={index} containerStyle={{ borderRadius: 35 }}>
-      {/* Badge important or not intersted */}
 
-      <Badge
-        containerStyle={{
-          padding: 4,
-          position: "absolute",
-          top: 2,
-          right:0,
-        }}
-        status={
-          item.status === true
-            ? "success"
-            : item.status === false
-            ? "error"
-            : null
-        }
-        value={
-          item.status === true
-            ? "IMPORTANT"
-            : item.status === false
-            ? "NOT INTERSTED"
-            : null
-        }
-      />
+  
+
+  return (
+    <Card key={index}  containerStyle={{ borderRadius: 35 }}>
+      {/* Badge important or not intersted */}
+      <View className=" absolute top-2 right-0 flex flex-row">
+
+
+
+     {/* Badges */}
+
+     {emailShoulBeSend.includes(item.name) &&   (
+          <Badge status="success" value="Send Email" />
+        )}
+
+        {callTodayCompanyNames.includes(item.name) && (
+          <Badge status="warning" value="Contacted Today" />
+        )}
+        <Badge
+          status={
+            item.status === true
+              ? "success"
+              : item.status === false
+              ? "error"
+              : null
+          }
+          value={
+            item.status === true
+              ? "IMPORTANT"
+              : item.status === false
+              ? "NOT INTERSTED"
+              : null
+          }
+        />
+      </View>
 
       <TouchableOpacity
         className="flex flex-row items-start justify-center space-x-1 mt-[4vh]"
@@ -49,7 +61,9 @@ const CompanyCard = ({
       >
         <Icon size={30} color="#19A7CE" name="business" />
 
-        <Card.Title h4 h4Style={{color:"#146C94"}}>{item?.name}</Card.Title>
+        <Card.Title h4 h4Style={{ color: "#146C94" }}>
+          {item?.name.substring(0, 20)}
+        </Card.Title>
       </TouchableOpacity>
       <View className="flex flex-row justify-evenly mt-[3vh]">
         <Button
@@ -120,32 +134,3 @@ const CompanyCard = ({
 
 export default React.memo(CompanyCard);
 
-{
-  /* <View className="flex flex-col border p-5 m-3 rounded-3xl space-y-1">
-<Text className="text-xl font-bold">{item?.name}</Text>
-<View className="flex flex-row">
-  <Icon name="call" size={25} />
-  <Text className="text-md mb-3">{item?.phone}</Text>
-</View>
-
-<View className="flex flex-row justify-evenly">
-  <Button
-    radius={"lg"}
-    title="Contact History"
-    onPress={() => {
-      setSelectedCompany(item);
-      setContactHistoryVisable(true);
-    }}
-  />
-
-  <Button
-    radius={"lg"}
-    title="Add Result"
-    onPress={() => {
-      setSelectedCompany(item);
-      setResultVisable(true);
-    }}
-  />
-</View>
-</View> */
-}
